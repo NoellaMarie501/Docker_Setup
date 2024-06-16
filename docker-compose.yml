@@ -1,9 +1,10 @@
 services:
   app:
     build: .
+    container_name: docker_setup_cs
     restart: always
-    env_file:
-      - variablea.env
+    ports:
+      - "4000:4000"
     depends_on:
       - database
       - cache
@@ -14,15 +15,25 @@ services:
       - server
     volumes:
       - .:/app
+    env_file:
+      - .env
   database:
     image: mysql
+    container_name: docker_setup_mysqly
     restart: always
+    environment:
+      - MYSQL_ROOT_HOST=${DB_HOST}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
     expose:
-      -  "3360"
+      - "3360"
     ports:
       - "3360:3360"
   cache:
     image: redis
+    container_name: docker_setup_redis
     restart: always
     ports:
       - "3000:8000"
@@ -30,8 +41,9 @@ services:
       - "8000"
   server:
     image: httpd
+    container_name: docker_setup_apache
+    restart: always
     expose:
       - "5000"
     ports:
       - "9000:5000"
-    
